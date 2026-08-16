@@ -1,0 +1,42 @@
+{
+  "name": "pebble-coin-price",
+  "description": "Pebble library to fetch a cryptocurrency price and return its value to the watch",
+  "author": "daktak",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/daktak/pebble-coin-price"
+  },
+  "version": "0.1.0",
+  "files": [
+    "dist.zip"
+  ],
+  "keywords": [
+    "pebble-package"
+  ],
+  "dependencies": {
+    "pebble-events": "^1.0.0"
+  },
+  "pebble": {
+    "projectType": "package",
+    "sdkVersion": "3",
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite",
+      "emery",
+      "gabbro",
+      "flint"
+    ],
+    "resources": {
+      "media": []
+    },
+    "messageKeys": [
+      "CP_COIN",
+      "CP_CURRENCY",
+      "CP_API_KEY",
+      "CP_RESULT",
+      "CP_ID"
+    ]
+  }
+}
