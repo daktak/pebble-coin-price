@@ -68,6 +68,17 @@ function parseCoin(coin) {
   return coinS;
 }
 
+function currencySymbol(currency) {
+  switch (currency) {
+    case CP_CURRENCY_EUR:
+      return "€";
+    case CP_CURRENCY_PND:
+      return "£";
+    default:
+      return "$";
+  }
+}
+
 function getRepString(rep) {
   if (rep < 2) {
     return rep.toFixed(2);
@@ -77,9 +88,9 @@ function getRepString(rep) {
   }
   if (rep < 10000) {
     var rs = String(rep);
-    return rs.charAt(0) + ',' + rs.substring(1);
+    return rs.charAt(0) + "," + rs.substring(1);
   }
-  return (rep / 1000).toFixed(rep % 1000 != 0) + 'K';
+  return (rep / 1000).toFixed(rep % 1000 != 0) + "K";
 }
 
 function queryCoin(messageId, coin, currency, api) {
@@ -89,7 +100,11 @@ function queryCoin(messageId, coin, currency, api) {
   }
   console.log("CMC api: " + api);
   var currencyS = parseCurrency(currency);
-  var url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=" + parseCoin(coin) + "&convert=" + currencyS.toUpperCase();
+  var url =
+    "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=" +
+    parseCoin(coin) +
+    "&convert=" +
+    currencyS.toUpperCase();
   console.log("requesting " + url);
   var xhr = new XMLHttpRequest();
   xhr.open("GET", url);
@@ -97,12 +112,15 @@ function queryCoin(messageId, coin, currency, api) {
   xhr.onload = function () {
     console.log(xhr.responseText);
     var responseJson = JSON.parse(xhr.responseText);
-    var price = responseJson["data"][parseCoin(coin)]["quote"][currencyS.toUpperCase()]["price"];
-    price = getRepString(price);
+    var price =
+      responseJson["data"][parseCoin(coin)]["quote"][currencyS.toUpperCase()][
+        "price"
+      ];
+    price = currencySymbol(currency) + getRepString(price);
     console.log("Ticker:  " + price);
     Pebble.sendAppMessage({
-      "CP_RESULT": price,
-      "CP_ID": messageId
+      CP_RESULT: price,
+      CP_ID: messageId,
     });
   };
   xhr.send();
@@ -114,8 +132,12 @@ CoinPrice.prototype.appMessageHandler = function (e) {
   if (typeof coin === "undefined") {
     return; // not a request for us
   }
-  var currency = typeof payload["CP_CURRENCY"] !== "undefined" ? payload["CP_CURRENCY"] : CP_CURRENCY_USD;
-  var api = typeof payload["CP_API_KEY"] !== "undefined" ? payload["CP_API_KEY"] : "";
+  var currency =
+    typeof payload["CP_CURRENCY"] !== "undefined"
+      ? payload["CP_CURRENCY"]
+      : CP_CURRENCY_USD;
+  var api =
+    typeof payload["CP_API_KEY"] !== "undefined" ? payload["CP_API_KEY"] : "";
   var id = typeof payload["CP_ID"] !== "undefined" ? payload["CP_ID"] : 0;
   queryCoin(id, coin, currency, api);
 };
