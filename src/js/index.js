@@ -27,7 +27,7 @@ function parseCurrency(currency) {
       currencyS = "aud";
       break;
     case CP_CURRENCY_CAN:
-      currencyS = "can";
+      currencyS = "cad";
       break;
     case CP_CURRENCY_NZD:
       currencyS = "nzd";
@@ -36,7 +36,7 @@ function parseCurrency(currency) {
       currencyS = "eur";
       break;
     case CP_CURRENCY_PND:
-      currencyS = "pnd";
+      currencyS = "gbp";
       break;
     default:
       currencyS = "usd";
@@ -80,6 +80,9 @@ function currencySymbol(currency) {
 }
 
 function getRepString(rep) {
+  if (rep == null) {
+    return "N/A";
+  }
   if (rep < 2) {
     return rep.toFixed(2);
   }
@@ -112,11 +115,13 @@ function queryCoin(messageId, coin, currency, api) {
   xhr.onload = function () {
     console.log(xhr.responseText);
     var responseJson = JSON.parse(xhr.responseText);
+    var entry =
+      responseJson["data"][parseCoin(coin)]["quote"][currencyS.toUpperCase()];
+    var rawPrice = entry ? entry["price"] : null;
     var price =
-      responseJson["data"][parseCoin(coin)]["quote"][currencyS.toUpperCase()][
-        "price"
-      ];
-    price = currencySymbol(currency) + getRepString(price);
+      rawPrice == null
+        ? currencySymbol(currency) + "N/A"
+        : currencySymbol(currency) + getRepString(rawPrice);
     console.log("Ticker:  " + price);
     Pebble.sendAppMessage({
       CP_RESULT: price,

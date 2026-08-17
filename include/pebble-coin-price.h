@@ -34,3 +34,7 @@ void coin_price_init(void);
 void coin_price_deinit(void);
 void coin_price_set_handler(CoinPriceHandler handler);
 int coin_price_fetch(CoinPriceCoin coin, CoinPriceCurrency currency, const char *api_key);
+
+// Returns the last known price (read from persistent storage if needed),
+// or NULL if none has ever been received. Do not free the result.
+const char *coin_price_get_last(void);
